@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <div th:replace="blog/yummy-jekyll/header::header('首页','My Blog')"></div>
-<body>
+<body class="keep-eye">
 <div class="content">
     <section class="jumbotron">
         <div class="container">
-            <h3>我不怕千万人阻挡，只怕自己投降！</h3>
+            <h3>It doesn't matter how slow you are, as long as you're determined to get there, you'll get there !</h3>
         </div>
     </section>
     <section class="content container">
@@ -23,8 +23,9 @@
                                     </a>
                                 </h3>
                                 <p class="post-list-cover-img">
-                                    <a th:href="@{'/blog/' + ${blog.blogId}}"> <img th:src="@{${blog.blogCoverImage}}"
-                                                                                    alt=""></a>
+                                    <a th:href="@{'/blog/' + ${blog.blogId}}">
+                                        <span th:text="${blog.blogSummary}"></span>
+                                    </a>
                                 </p>
                                 <p class="post-list-meta">
                                     <span class="octicon octicon-calendar"
@@ -73,9 +74,11 @@
                     <ul class="list-group">
                         <th:block th:if="${null != hotBlogs}">
                             <th:block th:each="hotBlog : ${hotBlogs}">
-                                <li class="list-group-item"><a th:href="@{'/blog/' + ${hotBlog.blogId}}">
-                                    <th:block th:text="${hotBlog.blogTitle}"></th:block>
-                                </a></li>
+                                <li class="list-group-item keep-eye">
+                                    <a th:href="@{'/blog/' + ${hotBlog.blogId}}">
+                                        <th:block th:text="${hotBlog.blogTitle}"></th:block>
+                                    </a>
+                                </li>
                             </th:block>
                         </th:block>
                     </ul>
@@ -85,9 +88,11 @@
                     <ul class="list-group">
                         <th:block th:if="${null != newBlogs}">
                             <th:block th:each="newBlog : ${newBlogs}">
-                                <li class="list-group-item"><a th:href="@{'/blog/' + ${newBlog.blogId}}">
-                                    <th:block th:text="${newBlog.blogTitle}"></th:block>
-                                </a></li>
+                                <li class="list-group-item keep-eye">
+                                    <a th:href="@{'/blog/' + ${newBlog.blogId}}">
+                                        <th:block th:text="${newBlog.blogTitle}"></th:block>
+                                    </a>
+                                </li>
                             </th:block>
                         </th:block>
                     </ul>
@@ -97,7 +102,7 @@
                     <ul class="list-group">
                         <th:block th:if="${null != hotTags}">
                             <th:block th:each="hotTag : ${hotTags}">
-                                <li class="list-group-item"><a th:href="@{'/tag/' + ${hotTag.tagName}}">
+                                <li class="list-group-item keep-eye"><a th:href="@{'/tag/' + ${hotTag.tagName}}">
                                     <th:block th:text="${hotTag.tagName}"></th:block>
                                     <span class="badge" th:text="${hotTag.tagCount}">1</span>
                                 </a></li>

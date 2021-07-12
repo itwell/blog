@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <div th:replace="blog/yummy-jekyll/header::header('分类','My Blog')"></div>
-<body>
+<body class="keep-eye">
 <div class="content">
     <div id="container-open-source">
         <section class="jumbotron"
@@ -22,7 +22,7 @@
                     <th:block th:if="${null != categories}">
                         <th:block th:each="category : ${categories}">
                             <div class="col-md-6 card text-center">
-                                <div class="thumbnail">
+                                <div class="thumbnail keep-eye">
                                     <div class="card-image"
                                          th:style="'background:url(' + @{(${category.categoryIcon})} + ');background-repeat:no-repeat;'">
                                         <div class="card-image-cell">
@@ -57,10 +57,12 @@
                         <ul class="list-group">
                             <th:block th:if="${null != hotTags}">
                                 <th:block th:each="hotTag : ${hotTags}">
-                                    <li class="list-group-item"><a th:href="@{'/tag/' + ${hotTag.tagName}}">
-                                        <th:block th:text="${hotTag.tagName}"></th:block>
-                                        <span class="badge" th:text="${hotTag.tagCount}">1</span>
-                                    </a></li>
+                                    <li class="list-group-item keep-eye">
+                                        <a th:href="@{'/tag/' + ${hotTag.tagName}}">
+                                            <th:block th:text="${hotTag.tagName}"></th:block>
+                                            <span class="badge" th:text="${hotTag.tagCount}">1</span>
+                                        </a>
+                                    </li>
                                 </th:block>
                             </th:block>
                         </ul>
