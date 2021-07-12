@@ -21,6 +21,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +38,9 @@ public class BlogServiceImpl implements BlogService {
     private BlogTagRelationMapper blogTagRelationMapper;
     @Autowired
     private BlogCommentMapper blogCommentMapper;
+
+    //定义HTML标签的正则表达式
+    private static final String regEx_html = "<[^>]+>";
 
     @Override
     @Transactional
@@ -188,12 +193,33 @@ public class BlogServiceImpl implements BlogService {
     public PageResult getBlogsForIndexPage(int page) {
         Map params = new HashMap();
         params.put("page", page);
-        //每页8条
-        params.put("limit", 8);
+        //每页10条
+        params.put("limit", 10);
         params.put("blogStatus", 1);//过滤发布状态下的数据
         PageQueryUtil pageUtil = new PageQueryUtil(params);
         List<Blog> blogList = blogMapper.findBlogList(pageUtil);
         List<BlogListVO> blogListVOS = getBlogListVOsByBlogs(blogList);
+
+        for (int i = 0; i < blogListVOS.size(); i++) {
+            Long blogId = blogListVOS.get(i).getBlogId();
+            BlogDetailVO blogDetail = this.getBlogDetail(blogId);
+            String blogContent = blogDetail.getBlogContent();
+            int summaryLength = 100;
+            if (blogContent.length()<100){
+                summaryLength = blogContent.length();
+            }
+            String blogSummary = blogContent.substring(0, summaryLength);
+
+            Pattern p_html = Pattern.compile(regEx_html, Pattern.CASE_INSENSITIVE);
+            Matcher m_html = p_html.matcher(blogSummary);
+            blogSummary = m_html.replaceAll("");
+
+            blogListVOS.get(i).setBlogSummary(blogSummary);
+        }
+
+
+
+
         int total = blogMapper.getTotalBlogs(pageUtil);
         PageResult pageResult = new PageResult(blogListVOS, total, pageUtil.getLimit(), pageUtil.getPage());
         return pageResult;

@@ -15,6 +15,8 @@ public class BlogListVO implements Serializable {
 
     private String blogCoverImage;
 
+    private String blogSummary;
+
     private Integer blogCategoryId;
 
     private String blogCategoryIcon;
@@ -86,5 +88,13 @@ public class BlogListVO implements Serializable {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getBlogSummary() {
+        return blogSummary;
+    }
+
+    public void setBlogSummary(String blogSummary) {
+        this.blogSummary = blogSummary;
     }
 }
