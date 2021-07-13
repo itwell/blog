@@ -11,13 +11,11 @@ public class Blog {
 
     private String blogSubUrl;
 
-    private String blogCoverImage;
+    private String blogSummary;
 
     private Integer blogCategoryId;
 
     private String blogCategoryName;
-
-    private String blogTags;
 
     private Byte blogStatus;
 
@@ -58,12 +56,12 @@ public class Blog {
         this.blogSubUrl = blogSubUrl == null ? null : blogSubUrl.trim();
     }
 
-    public String getBlogCoverImage() {
-        return blogCoverImage;
+    public String getBlogSummary() {
+        return blogSummary;
     }
 
-    public void setBlogCoverImage(String blogCoverImage) {
-        this.blogCoverImage = blogCoverImage == null ? null : blogCoverImage.trim();
+    public void setBlogSummary(String blogSummary) {
+        this.blogSummary = blogSummary;
     }
 
     public Integer getBlogCategoryId() {
@@ -80,14 +78,6 @@ public class Blog {
 
     public void setBlogCategoryName(String blogCategoryName) {
         this.blogCategoryName = blogCategoryName == null ? null : blogCategoryName.trim();
-    }
-
-    public String getBlogTags() {
-        return blogTags;
-    }
-
-    public void setBlogTags(String blogTags) {
-        this.blogTags = blogTags == null ? null : blogTags.trim();
     }
 
     public Byte getBlogStatus() {
@@ -155,10 +145,9 @@ public class Blog {
         sb.append(", blogId=").append(blogId);
         sb.append(", blogTitle=").append(blogTitle);
         sb.append(", blogSubUrl=").append(blogSubUrl);
-        sb.append(", blogCoverImage=").append(blogCoverImage);
+        sb.append(", blogSummary=").append(blogSummary);
         sb.append(", blogCategoryId=").append(blogCategoryId);
         sb.append(", blogCategoryName=").append(blogCategoryName);
-        sb.append(", blogTags=").append(blogTags);
         sb.append(", blogStatus=").append(blogStatus);
         sb.append(", blogViews=").append(blogViews);
         sb.append(", enableComment=").append(enableComment);

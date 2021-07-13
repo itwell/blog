@@ -11,8 +11,7 @@
                     <h1>分类与标签</h1>
                     <span class="meta-info">
                             共有&nbsp;
-                            <span class="repo-count badge" th:text="${#lists.size(categories)}">1</span>&nbsp;个分类条目和&nbsp;<span class="repo-count badge" th:text="${#lists.size(hotTags)}">1</span>&nbsp;个标签
-                    </span>
+                            <span class="repo-count badge" th:text="${#lists.size(categories)}">1</span>&nbsp;个分类条目;
                 </div>
             </div>
         </section>
@@ -23,7 +22,7 @@
                         <th:block th:each="category : ${categories}">
                             <div class="col-md-6 card text-center">
                                 <div class="thumbnail keep-eye">
-                                    <div class="card-image"
+                                    <!--<div class="card-image"
                                          th:style="'background:url(' + @{(${category.categoryIcon})} + ');background-repeat:no-repeat;'">
                                         <div class="card-image-cell">
                                             <h3 class="card-title">
@@ -32,7 +31,7 @@
                                                 </a>
                                             </h3>
                                         </div>
-                                    </div>
+                                    </div>-->
                                     <div class="caption">
                                         <div class="card-description">
                                             <p class="card-text" th:text="${category.categoryName}"></p>

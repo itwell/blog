@@ -109,9 +109,7 @@ public class BlogController {
         blog.setBlogTitle(blogTitle);
         blog.setBlogSubUrl(blogSubUrl);
         blog.setBlogCategoryId(blogCategoryId);
-        blog.setBlogTags(blogTags);
         blog.setBlogContent(blogContent);
-        blog.setBlogCoverImage(blogCoverImage);
         blog.setBlogStatus(blogStatus);
         blog.setEnableComment(enableComment);
         String saveBlogResult = blogService.saveBlog(blog);
@@ -162,9 +160,7 @@ public class BlogController {
         blog.setBlogTitle(blogTitle);
         blog.setBlogSubUrl(blogSubUrl);
         blog.setBlogCategoryId(blogCategoryId);
-        blog.setBlogTags(blogTags);
         blog.setBlogContent(blogContent);
-        blog.setBlogCoverImage(blogCoverImage);
         blog.setBlogStatus(blogStatus);
         blog.setEnableComment(enableComment);
         String updateBlogResult = blogService.updateBlog(blog);

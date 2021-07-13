@@ -6,8 +6,6 @@ import com.site.blog.my.core.controller.vo.SimpleBlogListVO;
 import com.site.blog.my.core.dao.*;
 import com.site.blog.my.core.entity.Blog;
 import com.site.blog.my.core.entity.BlogCategory;
-import com.site.blog.my.core.entity.BlogTag;
-import com.site.blog.my.core.entity.BlogTagRelation;
 import com.site.blog.my.core.service.BlogService;
 import com.site.blog.my.core.util.MarkDownUtil;
 import com.site.blog.my.core.util.PageQueryUtil;
@@ -33,10 +31,6 @@ public class BlogServiceImpl implements BlogService {
     @Autowired
     private BlogCategoryMapper categoryMapper;
     @Autowired
-    private BlogTagMapper tagMapper;
-    @Autowired
-    private BlogTagRelationMapper blogTagRelationMapper;
-    @Autowired
     private BlogCommentMapper blogCommentMapper;
 
     //定义HTML标签的正则表达式
@@ -52,48 +46,11 @@ public class BlogServiceImpl implements BlogService {
         } else {
             //设置博客分类名称
             blog.setBlogCategoryName(blogCategory.getCategoryName());
-            //分类的排序值加1
-            blogCategory.setCategoryRank(blogCategory.getCategoryRank() + 1);
         }
-        //处理标签数据
-        String[] tags = blog.getBlogTags().split(",");
-        if (tags.length > 6) {
-            return "标签数量限制为6";
-        }
+
         //保存文章
         if (blogMapper.insertSelective(blog) > 0) {
-            //新增的tag对象
-            List<BlogTag> tagListForInsert = new ArrayList<>();
-            //所有的tag对象，用于建立关系数据
-            List<BlogTag> allTagsList = new ArrayList<>();
-            for (int i = 0; i < tags.length; i++) {
-                BlogTag tag = tagMapper.selectByTagName(tags[i]);
-                if (tag == null) {
-                    //不存在就新增
-                    BlogTag tempTag = new BlogTag();
-                    tempTag.setTagName(tags[i]);
-                    tagListForInsert.add(tempTag);
-                } else {
-                    allTagsList.add(tag);
-                }
-            }
-            //新增标签数据并修改分类排序值
-            if (!CollectionUtils.isEmpty(tagListForInsert)) {
-                tagMapper.batchInsertBlogTag(tagListForInsert);
-            }
             categoryMapper.updateByPrimaryKeySelective(blogCategory);
-            List<BlogTagRelation> blogTagRelations = new ArrayList<>();
-            //新增关系数据
-            allTagsList.addAll(tagListForInsert);
-            for (BlogTag tag : allTagsList) {
-                BlogTagRelation blogTagRelation = new BlogTagRelation();
-                blogTagRelation.setBlogId(blog.getBlogId());
-                blogTagRelation.setTagId(tag.getTagId());
-                blogTagRelations.add(blogTagRelation);
-            }
-            if (blogTagRelationMapper.batchInsert(blogTagRelations) > 0) {
-                return "success";
-            }
         }
         return "保存失败";
     }
@@ -131,7 +88,6 @@ public class BlogServiceImpl implements BlogService {
         blogForUpdate.setBlogTitle(blog.getBlogTitle());
         blogForUpdate.setBlogSubUrl(blog.getBlogSubUrl());
         blogForUpdate.setBlogContent(blog.getBlogContent());
-        blogForUpdate.setBlogCoverImage(blog.getBlogCoverImage());
         blogForUpdate.setBlogStatus(blog.getBlogStatus());
         blogForUpdate.setEnableComment(blog.getEnableComment());
         BlogCategory blogCategory = categoryMapper.selectByPrimaryKey(blog.getBlogCategoryId());
@@ -142,47 +98,9 @@ public class BlogServiceImpl implements BlogService {
             //设置博客分类名称
             blogForUpdate.setBlogCategoryName(blogCategory.getCategoryName());
             blogForUpdate.setBlogCategoryId(blogCategory.getCategoryId());
-            //分类的排序值加1
-            blogCategory.setCategoryRank(blogCategory.getCategoryRank() + 1);
-        }
-        //处理标签数据
-        String[] tags = blog.getBlogTags().split(",");
-        if (tags.length > 6) {
-            return "标签数量限制为6";
-        }
-        blogForUpdate.setBlogTags(blog.getBlogTags());
-        //新增的tag对象
-        List<BlogTag> tagListForInsert = new ArrayList<>();
-        //所有的tag对象，用于建立关系数据
-        List<BlogTag> allTagsList = new ArrayList<>();
-        for (int i = 0; i < tags.length; i++) {
-            BlogTag tag = tagMapper.selectByTagName(tags[i]);
-            if (tag == null) {
-                //不存在就新增
-                BlogTag tempTag = new BlogTag();
-                tempTag.setTagName(tags[i]);
-                tagListForInsert.add(tempTag);
-            } else {
-                allTagsList.add(tag);
-            }
-        }
-        //新增标签数据不为空->新增标签数据
-        if (!CollectionUtils.isEmpty(tagListForInsert)) {
-            tagMapper.batchInsertBlogTag(tagListForInsert);
-        }
-        List<BlogTagRelation> blogTagRelations = new ArrayList<>();
-        //新增关系数据
-        allTagsList.addAll(tagListForInsert);
-        for (BlogTag tag : allTagsList) {
-            BlogTagRelation blogTagRelation = new BlogTagRelation();
-            blogTagRelation.setBlogId(blog.getBlogId());
-            blogTagRelation.setTagId(tag.getTagId());
-            blogTagRelations.add(blogTagRelation);
         }
         //修改blog信息->修改分类排序值->删除原关系数据->保存新的关系数据
         categoryMapper.updateByPrimaryKeySelective(blogCategory);
-        blogTagRelationMapper.deleteByBlogId(blog.getBlogId());
-        blogTagRelationMapper.batchInsert(blogTagRelations);
         if (blogMapper.updateByPrimaryKeySelective(blogForUpdate) > 0) {
             return "success";
         }
@@ -199,27 +117,6 @@ public class BlogServiceImpl implements BlogService {
         PageQueryUtil pageUtil = new PageQueryUtil(params);
         List<Blog> blogList = blogMapper.findBlogList(pageUtil);
         List<BlogListVO> blogListVOS = getBlogListVOsByBlogs(blogList);
-
-        for (int i = 0; i < blogListVOS.size(); i++) {
-            Long blogId = blogListVOS.get(i).getBlogId();
-            BlogDetailVO blogDetail = this.getBlogDetail(blogId);
-            String blogContent = blogDetail.getBlogContent();
-            int summaryLength = 100;
-            if (blogContent.length()<100){
-                summaryLength = blogContent.length();
-            }
-            String blogSummary = blogContent.substring(0, summaryLength);
-
-            Pattern p_html = Pattern.compile(regEx_html, Pattern.CASE_INSENSITIVE);
-            Matcher m_html = p_html.matcher(blogSummary);
-            blogSummary = m_html.replaceAll("");
-
-            blogListVOS.get(i).setBlogSummary(blogSummary);
-        }
-
-
-
-
         int total = blogMapper.getTotalBlogs(pageUtil);
         PageResult pageResult = new PageResult(blogListVOS, total, pageUtil.getLimit(), pageUtil.getPage());
         return pageResult;
@@ -253,19 +150,15 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public PageResult getBlogsPageByTag(String tagName, int page) {
         if (PatternUtil.validKeyword(tagName)) {
-            BlogTag tag = tagMapper.selectByTagName(tagName);
-            if (tag != null && page > 0) {
                 Map param = new HashMap();
                 param.put("page", page);
                 param.put("limit", 9);
-                param.put("tagId", tag.getTagId());
                 PageQueryUtil pageUtil = new PageQueryUtil(param);
                 List<Blog> blogList = blogMapper.getBlogsPageByTagId(pageUtil);
                 List<BlogListVO> blogListVOS = getBlogListVOsByBlogs(blogList);
                 int total = blogMapper.getTotalBlogsByTagId(pageUtil);
                 PageResult pageResult = new PageResult(blogListVOS, total, pageUtil.getLimit(), pageUtil.getPage());
                 return pageResult;
-            }
         }
         return null;
     }
@@ -343,22 +236,13 @@ public class BlogServiceImpl implements BlogService {
                 blogCategory = new BlogCategory();
                 blogCategory.setCategoryId(0);
                 blogCategory.setCategoryName("默认分类");
-                blogCategory.setCategoryIcon("/admin/dist/img/category/00.png");
             }
-            //分类信息
-            blogDetailVO.setBlogCategoryIcon(blogCategory.getCategoryIcon());
-            if (!StringUtils.isEmpty(blog.getBlogTags())) {
-                //标签设置
-                List<String> tags = Arrays.asList(blog.getBlogTags().split(","));
-                blogDetailVO.setBlogTags(tags);
-            }
-            //设置评论数
-            Map params = new HashMap();
-            params.put("blogId", blog.getBlogId());
-            params.put("commentStatus", 1);//过滤审核通过的数据
-            blogDetailVO.setCommentCount(blogCommentMapper.getTotalBlogComments(params));
             return blogDetailVO;
         }
+        //设置评论数
+        Map params = new HashMap();
+        params.put("blogId", blog.getBlogId());
+        params.put("commentStatus", 1);//过滤审核通过的数据
         return null;
     }
 
@@ -370,7 +254,7 @@ public class BlogServiceImpl implements BlogService {
             if (!CollectionUtils.isEmpty(categoryIds)) {
                 List<BlogCategory> blogCategories = categoryMapper.selectByCategoryIds(categoryIds);
                 if (!CollectionUtils.isEmpty(blogCategories)) {
-                    blogCategoryMap = blogCategories.stream().collect(Collectors.toMap(BlogCategory::getCategoryId, BlogCategory::getCategoryIcon, (key1, key2) -> key2));
+                    //blogCategoryMap = blogCategories.stream().collect(Collectors.toMap(BlogCategory::getCategoryId, (key1, key2) -> key2));
                 }
             }
             for (Blog blog : blogList) {

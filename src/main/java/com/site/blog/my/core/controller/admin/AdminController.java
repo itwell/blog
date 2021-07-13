@@ -23,8 +23,6 @@ public class AdminController {
     @Resource
     private LinkService linkService;
     @Resource
-    private TagService tagService;
-    @Resource
     private CommentService commentService;
 
 
@@ -39,7 +37,6 @@ public class AdminController {
         request.setAttribute("categoryCount", categoryService.getTotalCategories());
         request.setAttribute("blogCount", blogService.getTotalBlogs());
         request.setAttribute("linkCount", linkService.getTotalLinks());
-        request.setAttribute("tagCount", tagService.getTotalTags());
         request.setAttribute("commentCount", commentService.getTotalComments());
         return "admin/index";
     }

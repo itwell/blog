@@ -72,7 +72,7 @@
                         <h3>点击最多</h3>
                     </header>
                     <div class="body">
-                        <ul class="clean-list">
+                        <!--<ul class="clean-list">
                             <th:block th:if="${null != hotBlogs}">
                                 <th:block th:each="hotBlog : ${hotBlogs}">
                                     <li><a th:href="@{'/blog/' + ${hotBlog.blogId}}">
@@ -80,7 +80,7 @@
                                     </a></li>
                                 </th:block>
                             </th:block>
-                        </ul>
+                        </ul>-->
                     </div>
                 </div>
                 <div class="aside-widget">
@@ -88,7 +88,7 @@
                         <h3>最新发布</h3>
                     </header>
                     <div class="body">
-                        <ul class="clean-list">
+                        <!--<ul class="clean-list">
                             <th:block th:if="${null != newBlogs}">
                                 <th:block th:each="newBlog : ${newBlogs}">
                                     <li><a th:href="@{'/blog/' + ${newBlog.blogId}}">
@@ -96,7 +96,7 @@
                                     </a></li>
                                 </th:block>
                             </th:block>
-                        </ul>
+                        </ul>-->
                     </div>
                 </div>
                 <div class="aside-widget">
@@ -105,13 +105,13 @@
                     </header>
                     <div class="body clearfix">
                         <ul class="tags">
-                            <th:block th:if="${null != hotTags}">
+                            <!--<th:block th:if="${null != hotTags}">
                                 <th:block th:each="hotTag : ${hotTags}">
                                     <li><a th:href="@{'/tag/' + ${hotTag.tagName}}">
                                         <th:block th:text="${hotTag.tagName}+'('+${hotTag.tagCount}+')'"></th:block>
                                     </a></li>
                                 </th:block>
-                            </th:block>
+                            </th:block>-->
                         </ul>
                     </div>
                 </div>

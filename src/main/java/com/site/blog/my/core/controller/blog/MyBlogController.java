@@ -24,8 +24,6 @@ public class MyBlogController {
     @Resource
     private BlogService blogService;
     @Resource
-    private TagService tagService;
-    @Resource
     private LinkService linkService;
     @Resource
     private CommentService commentService;
@@ -41,7 +39,7 @@ public class MyBlogController {
      */
     @GetMapping({"/", "/index", "index.html"})
     public String index(HttpServletRequest request) {
-        return this.page(request, 1);
+        return this.findIndexPage(request, 1);
     }
 
     /**
@@ -50,7 +48,7 @@ public class MyBlogController {
      * @return
      */
     @GetMapping({"/page/{pageNum}"})
-    public String page(HttpServletRequest request, @PathVariable("pageNum") int pageNum) {
+    public String findIndexPage(HttpServletRequest request, @PathVariable("pageNum") int pageNum) {
         PageResult blogPageResult = blogService.getBlogsForIndexPage(pageNum);
         if (blogPageResult == null) {
             return "error/error_404";
@@ -58,7 +56,6 @@ public class MyBlogController {
         request.setAttribute("blogPageResult", blogPageResult);
         request.setAttribute("newBlogs", blogService.getBlogListForIndexPage(1));
         request.setAttribute("hotBlogs", blogService.getBlogListForIndexPage(0));
-        request.setAttribute("hotTags", tagService.getBlogTagCountForIndex());
         request.setAttribute("pageName", "首页");
         request.setAttribute("configurations", configService.getAllConfigs());
         return "blog/" + theme + "/index";
@@ -71,7 +68,6 @@ public class MyBlogController {
      */
     @GetMapping({"/categories"})
     public String categories(HttpServletRequest request) {
-        request.setAttribute("hotTags", tagService.getBlogTagCountForIndex());
         request.setAttribute("categories", categoryService.getAllCategories());
         request.setAttribute("pageName", "分类页面");
         request.setAttribute("configurations", configService.getAllConfigs());
@@ -119,7 +115,6 @@ public class MyBlogController {
         request.setAttribute("keyword", tagName);
         request.setAttribute("newBlogs", blogService.getBlogListForIndexPage(1));
         request.setAttribute("hotBlogs", blogService.getBlogListForIndexPage(0));
-        request.setAttribute("hotTags", tagService.getBlogTagCountForIndex());
         request.setAttribute("configurations", configService.getAllConfigs());
         return "blog/" + theme + "/list";
     }
@@ -148,7 +143,6 @@ public class MyBlogController {
         request.setAttribute("keyword", categoryName);
         request.setAttribute("newBlogs", blogService.getBlogListForIndexPage(1));
         request.setAttribute("hotBlogs", blogService.getBlogListForIndexPage(0));
-        request.setAttribute("hotTags", tagService.getBlogTagCountForIndex());
         request.setAttribute("configurations", configService.getAllConfigs());
         return "blog/" + theme + "/list";
     }
@@ -177,7 +171,6 @@ public class MyBlogController {
         request.setAttribute("keyword", keyword);
         request.setAttribute("newBlogs", blogService.getBlogListForIndexPage(1));
         request.setAttribute("hotBlogs", blogService.getBlogListForIndexPage(0));
-        request.setAttribute("hotTags", tagService.getBlogTagCountForIndex());
         request.setAttribute("configurations", configService.getAllConfigs());
         return "blog/" + theme + "/list";
     }
